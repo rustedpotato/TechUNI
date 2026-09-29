@@ -131,7 +131,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
             </div>
 
             {gate.canAdvance && nextStage && (
-              currentRole === 'admin' ? (
+              (currentRole === 'mentor' || currentRole === 'student') ? (
                 <button
                   onClick={() => onAdvanceStage(project.id)}
                   className="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold flex items-center gap-1.5 shadow transition self-start sm:self-auto"
@@ -140,7 +140,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
                 </button>
               ) : (
                 <span className="text-[11px] text-slate-400 italic">
-                  Switch to Admin role to promote stage
+                  Available for Mentor / Student review
                 </span>
               )
             )}

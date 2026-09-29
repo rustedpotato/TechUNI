@@ -89,7 +89,9 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
           <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
           <span>
             Acting as <strong className="text-white capitalize">{currentRole}</strong>
-            {currentRole === 'admin' ? ' (Can trigger Stage Gate advances if criteria met)' : ''}
+            {currentRole === 'mentor' && ' (Authorized to advance Stage Gates when criteria are met)'}
+            {currentRole === 'student' && ' (Innovator role: view criteria & complete milestone tasks)'}
+            {currentRole === 'buyer' && ' (Corporate Buyer: sponsor pilots & record validation interviews)'}
           </span>
         </div>
       </div>
@@ -159,7 +161,7 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
                                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                                 Gate Met
                               </span>
-                              {currentRole === 'admin' && nextStage && (
+                              {nextStage && (currentRole === 'mentor' || currentRole === 'student') && (
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();

@@ -8,13 +8,38 @@ import { ScorecardView } from './components/ScorecardView';
 import { DemandMatchingView } from './components/DemandMatchingView';
 import { IntakeForm } from './components/IntakeForm';
 import { ProjectDetailModal } from './components/ProjectDetailModal';
+import { LoginPage } from './components/LoginPage';
+
+interface UserProfile {
+  name: string;
+  email: string;
+  organization: string;
+}
 
 export const App: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>(INITIAL_PROJECTS);
   const [demands, setDemands] = useState<CompanyDemand[]>(INITIAL_DEMANDS);
-  const [currentRole, setRole] = useState<UserRole>('admin');
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [currentRole, setRole] = useState<UserRole>('student');
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [activeTab, setActiveTab] = useState<string>('pipeline');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+
+  // Authentication handler
+  const handleLogin = (role: UserRole, profile: UserProfile) => {
+    setRole(role);
+    setUserProfile(profile);
+    setIsAuthenticated(true);
+    // Direct user to most relevant tab for their persona
+    if (role === 'mentor') setActiveTab('scorecard');
+    else if (role === 'buyer') setActiveTab('demand');
+    else setActiveTab('pipeline');
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setUserProfile(null);
+  };
 
   // Stage gate advance handler
   const handleAdvanceStage = (projectId: string) => {
@@ -130,6 +155,11 @@ export const App: React.FC = () => {
     setDemands(prev => [newDemand, ...prev]);
   };
 
+  // If user is not logged in, show Login Page
+  if (!isAuthenticated) {
+    return <LoginPage onLogin={handleLogin} />;
+  }
+
   const currentModalProject = selectedProject 
     ? projects.find(p => p.id === selectedProject.id) || selectedProject 
     : null;
@@ -142,6 +172,8 @@ export const App: React.FC = () => {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         projectCount={projects.length}
+        userProfile={userProfile || undefined}
+        onLogout={handleLogout}
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6">
@@ -158,7 +190,7 @@ export const App: React.FC = () => {
           <ScorecardView
             projects={projects}
             onAddEvaluation={handleAddEvaluation}
-            reviewerName={currentRole === 'mentor' ? 'Senior Technical Reviewer' : 'Admin Evaluator'}
+            reviewerName={userProfile ? userProfile.name : 'Technical Reviewer'}
           />
         )}
 
