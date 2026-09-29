@@ -24,7 +24,8 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
   onAddBuyerValidation,
   onSignAgreement,
   onAddMilestone,
-  onAddTestLog
+  onAddTestLog,
+  currentRole
 }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'validation' | 'agreement' | 'prototyping' | 'pilot'>('overview');
   
@@ -130,12 +131,18 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
             </div>
 
             {gate.canAdvance && nextStage && (
-              <button
-                onClick={() => onAdvanceStage(project.id)}
-                className="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold flex items-center gap-1.5 shadow transition self-start sm:self-auto"
-              >
-                Promote to {nextStage} <ArrowRight className="w-3.5 h-3.5" />
-              </button>
+              currentRole === 'admin' ? (
+                <button
+                  onClick={() => onAdvanceStage(project.id)}
+                  className="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold flex items-center gap-1.5 shadow transition self-start sm:self-auto"
+                >
+                  Promote to {nextStage} <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              ) : (
+                <span className="text-[11px] text-slate-400 italic">
+                  Switch to Admin role to promote stage
+                </span>
+              )
             )}
           </div>
         </div>
