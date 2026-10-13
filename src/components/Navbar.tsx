@@ -52,10 +52,10 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Global Navigation Tabs */}
-        <nav className="flex items-center gap-1 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
+        <nav className="flex items-center gap-1 bg-slate-900/90 p-1 rounded-xl border border-slate-800 w-full md:w-auto overflow-x-auto scrollbar-none whitespace-nowrap">
           <button
             onClick={() => setActiveTab('pipeline')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex-shrink-0 ${
               activeTab === 'pipeline'
                 ? 'bg-emerald-600 text-white shadow-sm'
                 : 'text-slate-400 hover:text-slate-200'
@@ -65,7 +65,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('scorecard')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex-shrink-0 ${
               activeTab === 'scorecard'
                 ? 'bg-emerald-600 text-white shadow-sm'
                 : 'text-slate-400 hover:text-slate-200'
@@ -75,7 +75,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('demand')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex-shrink-0 ${
               activeTab === 'demand'
                 ? 'bg-emerald-600 text-white shadow-sm'
                 : 'text-slate-400 hover:text-slate-200'
@@ -85,7 +85,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('intake')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex-shrink-0 ${
               activeTab === 'intake'
                 ? 'bg-emerald-600 text-white shadow-sm'
                 : 'text-slate-400 hover:text-slate-200'
@@ -96,7 +96,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </nav>
 
         {/* Role Switcher & Sign Out */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between w-full md:w-auto gap-2">
           <div className="flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800">
             <span className="text-[10px] font-semibold text-slate-500 px-1.5 uppercase tracking-wider">Role:</span>
             {roles.map(r => (

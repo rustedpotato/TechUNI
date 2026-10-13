@@ -174,10 +174,10 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
         </div>
 
         {/* Modal Navigation Tabs */}
-        <div className="flex border-b border-slate-800 px-6 bg-slate-950/40">
+        <div className="flex border-b border-slate-800 px-4 sm:px-6 bg-slate-950/40 overflow-x-auto scrollbar-none whitespace-nowrap">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`py-3 px-4 text-xs font-medium border-b-2 transition ${
+            className={`py-3 px-3.5 sm:px-4 text-xs font-medium border-b-2 transition flex-shrink-0 ${
               activeTab === 'overview' ? 'border-emerald-500 text-emerald-400' : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -185,7 +185,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('aiInsights')}
-            className={`py-3 px-4 text-xs font-medium border-b-2 transition flex items-center gap-1.5 ${
+            className={`py-3 px-3.5 sm:px-4 text-xs font-medium border-b-2 transition flex items-center gap-1.5 flex-shrink-0 ${
               activeTab === 'aiInsights' ? 'border-indigo-500 text-indigo-400 font-semibold' : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -194,7 +194,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('validation')}
-            className={`py-3 px-4 text-xs font-medium border-b-2 transition flex items-center gap-1.5 ${
+            className={`py-3 px-3.5 sm:px-4 text-xs font-medium border-b-2 transition flex items-center gap-1.5 flex-shrink-0 ${
               activeTab === 'validation' ? 'border-emerald-500 text-emerald-400' : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -203,7 +203,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('agreement')}
-            className={`py-3 px-4 text-xs font-medium border-b-2 transition flex items-center gap-1.5 ${
+            className={`py-3 px-3.5 sm:px-4 text-xs font-medium border-b-2 transition flex items-center gap-1.5 flex-shrink-0 ${
               activeTab === 'agreement' ? 'border-emerald-500 text-emerald-400' : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -212,7 +212,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('prototyping')}
-            className={`py-3 px-4 text-xs font-medium border-b-2 transition flex items-center gap-1.5 ${
+            className={`py-3 px-3.5 sm:px-4 text-xs font-medium border-b-2 transition flex items-center gap-1.5 flex-shrink-0 ${
               activeTab === 'prototyping' ? 'border-emerald-500 text-emerald-400' : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -222,7 +222,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
           {project.pilot && (
             <button
               onClick={() => setActiveTab('pilot')}
-              className={`py-3 px-4 text-xs font-medium border-b-2 transition ${
+              className={`py-3 px-3.5 sm:px-4 text-xs font-medium border-b-2 transition flex-shrink-0 ${
                 activeTab === 'pilot' ? 'border-emerald-500 text-emerald-400' : 'border-transparent text-slate-400 hover:text-slate-200'
               }`}
             >
