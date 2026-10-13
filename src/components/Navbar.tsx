@@ -1,6 +1,6 @@
 import React from 'react';
 import type { UserRole } from '../types';
-import { GraduationCap, Award, Building2, Layers, LogOut } from 'lucide-react';
+import { GraduationCap, Award, Building2, Layers, LogOut, Sparkles } from 'lucide-react';
 
 interface NavbarProps {
   currentRole: UserRole;
@@ -10,6 +10,7 @@ interface NavbarProps {
   projectCount: number;
   userProfile?: { name: string; email: string; organization: string };
   onLogout: () => void;
+  onOpenAiConfig: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -19,7 +20,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   setActiveTab,
   projectCount,
   userProfile,
-  onLogout
+  onLogout,
+  onOpenAiConfig
 }) => {
   // Exclude 'admin' role per user requirement
   const roles: { role: UserRole; label: string; icon: React.ReactNode; badge: string }[] = [
@@ -113,6 +115,15 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             ))}
           </div>
+
+          <button
+            onClick={onOpenAiConfig}
+            title="Configure OpenAI API Key & Copilot Settings"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/20 hover:text-indigo-200 transition text-xs font-medium shadow-sm"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+            <span className="hidden sm:inline">AI Settings</span>
+          </button>
 
           <button
             onClick={onLogout}

@@ -9,6 +9,7 @@ import { DemandMatchingView } from './components/DemandMatchingView';
 import { IntakeForm } from './components/IntakeForm';
 import { ProjectDetailModal } from './components/ProjectDetailModal';
 import { LoginPage } from './components/LoginPage';
+import { AiConfigModal } from './components/AiConfigModal';
 
 interface UserProfile {
   name: string;
@@ -24,6 +25,7 @@ export const App: React.FC = () => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [activeTab, setActiveTab] = useState<string>('pipeline');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [isAiConfigOpen, setIsAiConfigOpen] = useState<boolean>(false);
 
   // Authentication handler
   const handleLogin = (role: UserRole, profile: UserProfile) => {
@@ -174,6 +176,7 @@ export const App: React.FC = () => {
         projectCount={projects.length}
         userProfile={userProfile || undefined}
         onLogout={handleLogout}
+        onOpenAiConfig={() => setIsAiConfigOpen(true)}
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6">
@@ -226,6 +229,12 @@ export const App: React.FC = () => {
           currentRole={currentRole}
         />
       )}
+
+      {/* AI Configuration Modal */}
+      <AiConfigModal
+        isOpen={isAiConfigOpen}
+        onClose={() => setIsAiConfigOpen(false)}
+      />
 
       {/* Footer */}
       <footer className="border-t border-slate-800/80 py-4 px-6 text-center text-xs text-slate-500">

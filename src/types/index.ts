@@ -33,6 +33,24 @@ export interface Project {
   testLogs: TestLog[];
   pilot?: Pilot;
   deal?: Deal;
+  aiInsights?: AiCommercializationInsight;
+}
+
+export interface AiCommercializationInsight {
+  executivePitch: string;
+  targetBuyers: {
+    sector: string;
+    targetRole: string;
+    valueHook: string;
+  }[];
+  pilotFramework: {
+    duration: string;
+    primaryMetric: string;
+    recommendedScope: string;
+  };
+  licensingStrategy: string;
+  trlAdvancementPlan: string[];
+  generatedAt: string;
 }
 
 export interface Evaluation {

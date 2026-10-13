@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { Project, Evaluation } from '../types';
-import { Award, AlertCircle, Sparkles, Scale } from 'lucide-react';
+import { Award, AlertCircle, Sparkles, Scale, RefreshCw, ArrowRight, ShieldCheck } from 'lucide-react';
+import { analyzeProjectWithAi, type AiEvaluationResult } from '../services/aiCommercializationService';
 
 interface ScorecardViewProps {
   projects: Project[];
@@ -15,6 +16,10 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
 }) => {
   const [selectedProjectId, setSelectedProjectId] = useState<string>(projects[0]?.id || '');
   
+  // AI evaluation state
+  const [isAiLoading, setIsAiLoading] = useState<boolean>(false);
+  const [aiEvalResult, setAiEvalResult] = useState<AiEvaluationResult | null>(null);
+
   // 7 Parameters according to PDR FR-04
   const [problemSeverity, setProblemSeverity] = useState<number>(16);
   const [marketPotential, setMarketPotential] = useState<number>(15);
@@ -26,6 +31,38 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
   const [notes, setNotes] = useState<string>('');
 
   const currentProject = projects.find(p => p.id === selectedProjectId) || projects[0];
+
+  const handleRunAiEvaluation = async () => {
+    if (!currentProject) return;
+    setIsAiLoading(true);
+    try {
+      const res = await analyzeProjectWithAi(currentProject);
+      setAiEvalResult(res);
+    } catch (e) {
+      console.error('AI evaluation failed', e);
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
+
+  const handleApplyAiScore = () => {
+    if (!aiEvalResult) return;
+    const ev = aiEvalResult.evaluation;
+    setProblemSeverity(ev.problemSeverity);
+    setMarketPotential(ev.marketPotential);
+    setTechnicalFeasibility(ev.technicalFeasibility);
+    setDifferentiation(ev.differentiation);
+    setIpPotential(ev.ipPotential);
+    setCostScalability(ev.costScalability);
+    setIndustryDemand(ev.industryDemand);
+    setNotes(ev.notes);
+  };
+
+  const handleCommitAiAdvisory = () => {
+    if (!aiEvalResult || !currentProject) return;
+    onAddEvaluation(currentProject.id, aiEvalResult.evaluation);
+    alert(`AI Advisory Pre-Score recorded for "${currentProject.title}"!`);
+  };
 
   const totalScore = 
     Number(problemSeverity) + 
@@ -156,15 +193,91 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
             </div>
 
             {/* AI Advisory Pre-Score Card (PDR FR-07) */}
-            <div className="bg-gradient-to-br from-indigo-950/40 to-slate-900/60 p-4 rounded-xl border border-indigo-500/20">
-              <div className="flex items-center gap-2 text-indigo-300 text-xs font-bold mb-1">
-                <Sparkles className="w-4 h-4 text-indigo-400" />
-                <span>AI Advisory Pre-Score (FR-07)</span>
+            <div className="bg-gradient-to-br from-indigo-950/40 to-slate-900/60 p-5 rounded-xl border border-indigo-500/20 space-y-3.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-indigo-300 text-xs font-bold">
+                  <Sparkles className="w-4 h-4 text-indigo-400" />
+                  <span>OpenAI Advisory Pre-Score (FR-07)</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleRunAiEvaluation}
+                  disabled={isAiLoading}
+                  className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-semibold rounded-lg transition flex items-center gap-1.5 disabled:opacity-50 shadow-sm"
+                >
+                  <RefreshCw className={`w-3 h-3 ${isAiLoading ? 'animate-spin' : ''}`} />
+                  {isAiLoading ? 'Analyzing...' : aiEvalResult ? 'Re-run AI' : 'Run AI Analysis'}
+                </button>
               </div>
-              <p className="text-[11px] text-slate-400">
-                Automated heuristic suggests <strong>82/100</strong> based on clear post-harvest TAM and provisional IP. 
-                <em className="text-slate-500 block mt-1">Note: Advisory only. Cannot serve as binding stage gate decision.</em>
-              </p>
+
+              {!aiEvalResult && !isAiLoading && (
+                <p className="text-[11px] text-slate-400 leading-relaxed">
+                  Generate objective, AI-assisted screening scores based on problem severity, market potential, and TRL readiness.
+                  <em className="text-slate-500 block mt-1">Non-binding advisory recommendation per PDR FR-07.</em>
+                </p>
+              )}
+
+              {isAiLoading && (
+                <div className="py-4 text-center space-y-2">
+                  <RefreshCw className="w-5 h-5 text-indigo-400 animate-spin mx-auto" />
+                  <p className="text-xs text-indigo-300 font-medium">Evaluating 7 commercialization dimensions via OpenAI...</p>
+                </div>
+              )}
+
+              {aiEvalResult && !isAiLoading && (
+                <div className="space-y-3 pt-1">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Calculated Advisory Score</span>
+                      <span className="text-xl font-extrabold text-indigo-300">
+                        {aiEvalResult.evaluation.totalScore} <span className="text-xs text-slate-400 font-normal">/ 100</span>
+                      </span>
+                    </div>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${
+                      aiEvalResult.isSimulated 
+                        ? 'bg-slate-800 text-slate-300 border-slate-700' 
+                        : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                    }`}>
+                      {aiEvalResult.isSimulated ? 'Calibrated Model' : 'OpenAI gpt-4o-mini'}
+                    </span>
+                  </div>
+
+                  <p className="text-[11px] text-slate-300 italic bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
+                    "{aiEvalResult.evaluation.notes}"
+                  </p>
+
+                  {/* Strengths & Risks */}
+                  {aiEvalResult.keyStrengths.length > 0 && (
+                    <div className="space-y-1 text-[11px]">
+                      <span className="text-emerald-400 font-semibold block text-[10px] uppercase">Key Strengths:</span>
+                      <ul className="list-disc list-inside text-slate-300 space-y-0.5">
+                        {aiEvalResult.keyStrengths.map((str, i) => (
+                          <li key={i}>{str}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  <div className="flex flex-col sm:flex-row items-center gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={handleApplyAiScore}
+                      className="w-full sm:w-auto flex-1 py-1.5 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition flex items-center justify-center gap-1.5"
+                    >
+                      <ArrowRight className="w-3.5 h-3.5 text-emerald-400" />
+                      Apply to Rubric Form
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleCommitAiAdvisory}
+                      className="w-full sm:w-auto flex-1 py-1.5 px-3 bg-indigo-600/80 hover:bg-indigo-600 text-white text-xs font-semibold rounded-lg transition flex items-center justify-center gap-1.5 shadow"
+                    >
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      Save as Assessment
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
